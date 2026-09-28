@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#006c5b">
+  <title>Which Vision 2030 Sector Suits You?</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #092a35;
+      --muted: #4d6570;
+      --canvas: #edf6f4;
+      --surface: rgba(255,255,255,.86);
+      --surface-solid: #ffffff;
+      --line: rgba(5, 78, 91, .16);
+      --green: #006c5b;
+      --green-strong: #005344;
+      --blue: #087da8;
+      --aqua: #11a8a2;
+      --mint: #d9f5ea;
+      --focus: #e76f21;
+      --danger: #b42318;
+      --shadow: 0 18px 48px rgba(9, 52, 61, .13);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --ease: cubic-bezier(.2,.8,.2,1);
+    }
+    [data-theme="dark"] {
+      color-scheme: dark;
+      --ink: #f3fbfa;
+      --muted: #b6cecd;
+      --canvas: #071f28;
+      --surface: rgba(10, 43, 53, .88);
+      --surface-solid: #0b2c35;
+      --line: rgba(180, 234, 224, .20);
+      --green: #39c9a3;
+      --green-strong: #76e3c5;
+      --blue: #55c9ee;
+      --aqua: #62d8d1;
+      --mint: #123f44;
+      --focus: #ffb678;
+      --danger: #ffb4ab;
+      --shadow: 0 20px 60px rgba(0,0,0,.30);
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--canvas); scroll-behavior: smooth; }
+    body {
+      min-width: 320px; min-height: 100dvh; margin: 0; overflow-x: hidden;
+      color: var(--ink); background:
+        radial-gradient(circle at 5% 0%, rgba(17,168,162,.20), transparent 24rem),
+        radial-gradient(circle at 95% 16%, rgba(8,125,168,.17), transparent 25rem), var(--canvas);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Tahoma, Arial, sans-serif;
+      line-height: 1.55;
+    }
+    [lang="ar"] body, [dir="rtl"] body { font-family: Tahoma, Arial, sans-serif; }
+    button, input { font: inherit; }
+    button, label { -webkit-tap-highlight-color: transparent; }
+    button { cursor: pointer; }
+    a { color: inherit; }
+    .skip-link { position: fixed; z-index: 100; left: .75rem; top: -5rem; padding: .75rem 1rem; color: #fff; background: var(--green-strong); border-radius: 0 0 12px 12px; }
+    .skip-link:focus { top: 0; }
+    .app-shell { width: min(100%, 860px); min-height: 100dvh; margin: 0 auto; padding: max(1.25rem, env(safe-area-inset-top)) 1rem max(2.25rem, env(safe-area-inset-bottom)); }
+    .topbar { position: fixed; z-index: 20; inset: max(.6rem, env(safe-area-inset-top)) max(.75rem, calc((100vw - 860px)/2 + 1rem)) auto; display: flex; align-items: center; justify-content: space-between; pointer-events: none; }
+    [dir="rtl"] .topbar { flex-direction: row-reverse; }
+    .brand { display: flex; gap: .55rem; align-items: center; color: var(--ink); font-weight: 800; letter-spacing: .01em; pointer-events: auto; }
+    .brand-mark { display: grid; width: 39px; height: 39px; place-items: center; color: #fff; background: linear-gradient(135deg,var(--green),var(--blue)); border-radius: 13px; box-shadow: 0 8px 20px rgba(0,108,91,.26); }
+    .brand-mark svg { width: 23px; height: 23px; }
+    .control-group { display: flex; gap: .5rem; pointer-events: auto; }
+    .icon-button, .language-button { display: inline-flex; min-width: 44px; height: 44px; align-items: center; justify-content: center; gap: .35rem; padding: 0 .75rem; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 6px 18px rgba(6,45,55,.08); transition: transform 180ms var(--ease), background 180ms var(--ease), border-color 180ms var(--ease); }
+    .icon-button:hover, .language-button:hover { transform: translateY(-2px); background: var(--surface-solid); border-color: var(--blue); }
+    .icon-button:active, .language-button:active, .button:active { transform: scale(.97); }
+    .icon-button svg { width: 20px; height: 20px; }
+    .language-button { font-weight: 800; font-size: .82rem; }
+    main { display: grid; min-height: calc(100dvh - 2.5rem); place-items: center; padding-top: 4.7rem; }
+    .view { width: 100%; }
+    .panel { position: relative; overflow: hidden; padding: clamp(1.5rem, 4.8vw, 3.5rem); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-xl); box-shadow: var(--shadow); backdrop-filter: blur(18px); }
+    .panel::before, .panel::after { position: absolute; z-index: -1; border-radius: 50%; content: ""; filter: blur(1px); pointer-events: none; }
+    .panel::before { width: 18rem; height: 18rem; top: -10rem; right: -9rem; background: radial-gradient(circle, rgba(17,168,162,.23), transparent 67%); }
+    .panel::after { width: 13rem; height: 13rem; bottom: -9rem; left: -7rem; background: radial-gradient(circle, rgba(8,125,168,.16), transparent 65%); }
+    .hero { padding-top: clamp(2.4rem, 8vw, 5rem); padding-bottom: clamp(2.1rem, 7vw, 4.5rem); text-align: center; }
+    .eyebrow { display: inline-flex; align-items: center; gap: .45rem; margin: 0 0 1rem; padding: .42rem .75rem; color: var(--green-strong); background: color-mix(in srgb, var(--mint) 76%, transparent); border: 1px solid color-mix(in srgb, var(--green) 23%, transparent); border-radius: 999px; font-size: .82rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+    .eyebrow::before { width: .48rem; height: .48rem; background: var(--aqua); border-radius: 999px; content: ""; box-shadow: 0 0 0 4px color-mix(in srgb, var(--aqua) 17%, transparent); }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { max-width: 720px; margin-right: auto; margin-left: auto; font-size: clamp(2.15rem, 8vw, 4.65rem); line-height: 1.04; letter-spacing: -.055em; text-wrap: balance; }
+    h2 { font-size: clamp(1.65rem, 5vw, 2.45rem); line-height: 1.16; letter-spacing: -.03em; text-wrap: balance; }
+    h3 { font-size: 1.12rem; }
+    .hero-copy { max-width: 590px; margin: 1.2rem auto 1.85rem; color: var(--muted); font-size: clamp(1rem, 2.5vw, 1.17rem); }
+    .orb { display: grid; width: clamp(90px, 22vw, 124px); height: clamp(90px, 22vw, 124px); place-items: center; margin: 0 auto 1.8rem; color: #fff; background: conic-gradient(from 205deg, var(--green), var(--aqua), var(--blue), var(--green)); border: 9px solid color-mix(in srgb, #fff 23%, transparent); border-radius: 50%; box-shadow: inset 0 0 18px rgba(255,255,255,.34), 0 18px 42px rgba(2,84,91,.25); animation: float 4s ease-in-out infinite; }
+    .orb svg { width: 55%; height: 55%; filter: drop-shadow(0 3px 3px rgba(0,0,0,.14)); }
+    .button-row { display: flex; flex-wrap: wrap; justify-content: center; gap: .8rem; }
+    .button { display: inline-flex; min-height: 50px; align-items: center; justify-content: center; gap: .65rem; padding: .78rem 1.2rem; color: #fff; background: linear-gradient(125deg,var(--green),var(--blue)); border: 1px solid transparent; border-radius: var(--radius-md); box-shadow: 0 10px 20px rgba(0,100,103,.23); font-weight: 800; text-decoration: none; transition: transform 180ms var(--ease), box-shadow 180ms var(--ease), opacity 180ms var(--ease); }
+    .button:hover { transform: translateY(-2px); box-shadow: 0 14px 27px rgba(0,100,103,.29); }
+    .button svg { width: 19px; height: 19px; }
+    .button.secondary { color: var(--ink); background: transparent; border-color: var(--line); box-shadow: none; }
+    .button.secondary:hover { border-color: var(--blue); background: color-mix(in srgb, var(--surface-solid) 70%, transparent); }
+    .button:disabled { cursor: not-allowed; opacity: .48; transform: none; box-shadow: none; }
+    .time-note { display: flex; justify-content: center; align-items: center; gap: .45rem; margin: 1.2rem 0 0; color: var(--muted); font-size: .9rem; }
+    .time-note svg { width: 17px; height: 17px; color: var(--blue); }
+    .feature-list { display: grid; grid-template-columns: repeat(3,1fr); gap: .6rem; margin: 2.15rem auto 0; max-width: 540px; text-align: start; }
+    .feature { min-height: 76px; padding: .75rem; color: var(--muted); background: color-mix(in srgb, var(--surface-solid) 64%, transparent); border: 1px solid var(--line); border-radius: 14px; font-size: .78rem; }
+    .feature strong { display: block; margin-bottom: .2rem; color: var(--ink); font-size: .82rem; }
+    .name-panel { max-width: 590px; margin: 0 auto; }
+    .back-link { display: inline-flex; align-items: center; gap: .45rem; min-height: 44px; margin-bottom: 1.1rem; padding: 0; color: var(--muted); background: none; border: 0; font-weight: 700; }
+    .back-link svg { width: 19px; height: 19px; }
+    .field-label { display: block; margin: 1.55rem 0 .45rem; font-weight: 800; }
+    .text-input { width: 100%; min-height: 54px; padding: .8rem .95rem; color: var(--ink); background: var(--surface-solid); border: 1px solid var(--line); border-radius: var(--radius-md); outline: none; font-size: 1rem; transition: border-color 160ms var(--ease), box-shadow 160ms var(--ease); }
+    .text-input:focus { border-color: var(--blue); box-shadow: 0 0 0 4px color-mix(in srgb, var(--blue) 21%, transparent); }
+    .field-help, .error-message { min-height: 1.3rem; margin: .5rem 0 1.1rem; color: var(--muted); font-size: .9rem; }
+    .error-message { color: var(--danger); font-weight: 700; }
+    .quiz-shell { max-width: 760px; margin: 0 auto; }
+    .quiz-top { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: .7rem; margin-bottom: 1rem; }
+    .step-label { color: var(--green-strong); font-size: .86rem; font-weight: 850; white-space: nowrap; }
+    .progress-track { height: 9px; overflow: hidden; background: color-mix(in srgb, var(--line) 73%, transparent); border-radius: 999px; }
+    .progress-bar { width: 0; height: 100%; background: linear-gradient(90deg,var(--green),var(--aqua),var(--blue)); border-radius: inherit; box-shadow: 0 0 12px rgba(17,168,162,.40); transition: width 360ms var(--ease); }
+    .progress-pct { color: var(--muted); font-size: .8rem; font-weight: 800; }
+    .question-card { min-height: 455px; padding: clamp(1.25rem, 4vw, 2.2rem); }
+    .question-kicker { display: flex; align-items: center; gap: .45rem; margin-bottom: .8rem; color: var(--blue); font-size: .88rem; font-weight: 850; }
+    .question-kicker svg { width: 19px; height: 19px; }
+    .question-card h2 { margin-bottom: 1.2rem; }
+    .multi-note { display: inline-flex; align-items: center; gap: .45rem; margin: -.35rem 0 1.15rem; padding: .48rem .7rem; color: var(--green-strong); background: color-mix(in srgb, var(--mint) 75%, transparent); border: 1px solid color-mix(in srgb, var(--green) 24%, transparent); border-radius: 11px; font-size: .84rem; font-weight: 800; }
+    .multi-note svg { width: 17px; height: 17px; }
+    fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+    legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+    .option-list { display: grid; gap: .65rem; }
+    .option { position: relative; display: flex; min-height: 58px; align-items: center; gap: .78rem; padding: .72rem .8rem; color: var(--ink); background: color-mix(in srgb, var(--surface-solid) 77%, transparent); border: 1px solid var(--line); border-radius: var(--radius-md); cursor: pointer; transition: transform 160ms var(--ease), background 160ms var(--ease), border-color 160ms var(--ease), box-shadow 160ms var(--ease); }
+    .option:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--blue) 75%, var(--line)); }
+    .option:focus-within { border-color: var(--blue); box-shadow: 0 0 0 4px color-mix(in srgb, var(--blue) 20%, transparent); }
+    .option.selected { background: color-mix(in srgb, var(--mint) 74%, var(--surface-solid)); border-color: var(--green); box-shadow: 0 7px 18px rgba(0,108,91,.10); }
+    .option input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+    .control { display: grid; width: 25px; height: 25px; flex: 0 0 25px; place-items: center; color: #fff; background: var(--surface-solid); border: 2px solid var(--muted); transition: background 160ms var(--ease), border-color 160ms var(--ease), transform 160ms var(--ease); }
+    .control.radio { border-radius: 50%; }
+    .control.checkbox { border-radius: 7px; }
+    .control svg { width: 16px; height: 16px; opacity: 0; transform: scale(.4); transition: opacity 150ms var(--ease), transform 150ms var(--ease); }
+    .option.selected .control { background: var(--green); border-color: var(--green); transform: scale(1.04); }
+    .option.selected .control svg { opacity: 1; transform: scale(1); }
+    .option-text { font-size: clamp(.95rem, 2.5vw, 1.03rem); font-weight: 650; }
+    .quiz-error { min-height: 1.35rem; margin: .85rem 0 0; color: var(--danger); font-size: .9rem; font-weight: 750; }
+    .quiz-actions { display: flex; justify-content: space-between; gap: .8rem; margin-top: 1.45rem; }
+    .quiz-actions .button { min-width: 118px; }
+    .result-panel { max-width: 760px; margin: 0 auto; }
+    .result-intro { text-align: center; }
+    .result-intro .eyebrow { margin-bottom: .8rem; }
+    .result-name { color: var(--green-strong); }
+    .result-subcopy { max-width: 570px; margin: .9rem auto 1.75rem; color: var(--muted); }
+    .result-grid { display: grid; gap: 1rem; }
+    .result-card { position: relative; overflow: hidden; display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: start; padding: 1.2rem; color: var(--ink); background: color-mix(in srgb, var(--surface-solid) 78%, transparent); border: 1px solid var(--line); border-radius: var(--radius-lg); animation: cardIn 450ms var(--ease) both; }
+    .result-card::after { position: absolute; top: 0; right: 0; left: 0; height: 4px; background: linear-gradient(90deg,var(--green),var(--aqua),var(--blue)); content: ""; }
+    .sector-icon { display: grid; width: 54px; height: 54px; place-items: center; color: #fff; background: linear-gradient(135deg,var(--green),var(--blue)); border-radius: 17px; box-shadow: 0 9px 20px rgba(0,102,103,.22); }
+    .sector-icon svg { width: 30px; height: 30px; }
+    .result-card h3 { margin-bottom: .2rem; font-size: 1.23rem; }
+    .percentage { display: inline-flex; align-items: baseline; gap: .2rem; margin-bottom: .55rem; color: var(--green-strong); font-size: 1.72rem; font-weight: 900; letter-spacing: -.04em; }
+    .percentage small { font-size: .82rem; letter-spacing: 0; }
+    .result-card p { margin-bottom: 0; color: var(--muted); font-size: .94rem; }
+    .courses { margin-top: 1.4rem; padding-top: 1.35rem; border-top: 1px solid var(--line); }
+    .courses h2 { margin-bottom: .8rem; font-size: 1.32rem; }
+    .course-list { display: grid; gap: .7rem; }
+    .course-link { display: flex; align-items: center; justify-content: space-between; gap: .7rem; min-height: 48px; padding: .75rem .85rem; color: var(--ink); background: color-mix(in srgb, var(--surface-solid) 72%, transparent); border: 1px solid var(--line); border-radius: 13px; font-size: .94rem; font-weight: 750; text-decoration: none; transition: transform 160ms var(--ease), border-color 160ms var(--ease), background 160ms var(--ease); }
+    .course-link:hover { transform: translateY(-2px); background: var(--surface-solid); border-color: var(--blue); }
+    .course-link svg { width: 18px; height: 18px; flex: 0 0 auto; color: var(--blue); }
+    .result-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem; margin-top: 1.5rem; }
+    .toast { position: fixed; z-index: 40; bottom: max(1rem, env(safe-area-inset-bottom)); left: 50%; width: max-content; max-width: calc(100vw - 2rem); padding: .75rem 1rem; color: #fff; background: #063e44; border-radius: 12px; box-shadow: 0 10px 24px rgba(0,0,0,.24); font-weight: 750; opacity: 0; pointer-events: none; transform: translate(-50%, 1.6rem); transition: opacity 220ms var(--ease), transform 220ms var(--ease); }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .hidden { display: none !important; }
+    :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+    .view-enter { animation: viewIn 360ms var(--ease) both; }
+    [dir="rtl"] .arrow-forward { transform: scaleX(-1); }
+    [dir="rtl"] .arrow-back { transform: scaleX(-1); }
+    @keyframes viewIn { from { opacity: 0; transform: translateY(13px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes cardIn { from { opacity: 0; transform: translateY(15px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes float { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-7px) rotate(2deg); } }
+    @media (min-width: 650px) { .app-shell { padding-right: 1.5rem; padding-left: 1.5rem; } .option-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } .quiz-actions { margin-top: 1.7rem; } .course-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } .course-link { min-height: 70px; align-items: flex-start; } }
+    @media (max-width: 430px) { .topbar .brand span { display: none; } .feature-list { grid-template-columns: 1fr; } .feature { min-height: auto; } .question-card { min-height: 0; } .quiz-top { grid-template-columns: 1fr auto; } .progress-track { grid-column: 1 / -1; grid-row: 2; } .quiz-actions .button { min-width: 0; flex: 1; } .button { width: 100%; } .result-actions .button { width: 100%; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content" id="skipLink">Skip to content</a>
+  <div class="app-shell">
+    <header class="topbar" aria-label="Application controls">
+      <div class="brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 17.5c5.6-1.1 8.6-5.2 9.6-11.3 2.4 4 2.5 8.4.6 12.1"/><path d="M7 13c2.9.1 5.3 1.4 7.1 4.3"/><path d="M5 20h14"/></svg></span><span id="brandText">Vision 2030</span></div>
+      <div class="control-group">
+        <button class="language-button" type="button" id="languageToggle" aria-label="Switch language" title="Switch language">عربي</button>
+        <button class="icon-button" type="button" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode"><svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v2M12 19v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M3 12h2M19 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/><circle cx="12" cy="12" r="4"/></svg></button>
+      </div>
+    </header>
+    <main id="main-content" tabindex="-1"></main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const icons = {
+      compass: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m14.9 9.1-2 4-4 2 2-4 4-2Z"/></svg>',
+      arrow: '<svg class="arrow-forward" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+      back: '<svg class="arrow-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m6 6-6-6 6-6"/></svg>',
+      clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg>',
+      spark: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m12 3 1.25 5.75L19 10l-5.75 1.25L12 17l-1.25-5.75L5 10l5.75-1.25L12 3Z"/><path d="m19 16 .55 2.45L22 19l-2.45.55L19 22l-.55-2.45L16 19l2.45-.55L19 16Z"/></svg>',
+      check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg>',
+      copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>',
+      external: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5h5v5M19 5l-9 9"/><path d="M11 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>',
+      medicine: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 21V3M3 12h18"/><path d="M5 5h14v14H5z" opacity=".45"/></svg>',
+      nursing: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 20s-7-4.3-7-9.2C5 8.4 6.7 7 8.8 7c1.4 0 2.6.8 3.2 1.8C12.6 7.8 13.8 7 15.2 7 17.3 7 19 8.4 19 10.8 19 15.7 12 20 12 20Z"/><path d="M10 12h4M12 10v4"/></svg>',
+      engineering: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M5 20V9l7-5 7 5v11M9 20v-6h6v6"/><path d="M12 4v10"/></svg>',
+      tourism: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.2 7-11a7 7 0 1 0-14 0c0 5.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg>',
+      media: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="6" width="12" height="12" rx="2"/><path d="m15 10 5-3v10l-5-3v-4Z"/><circle cx="9" cy="12" r="2"/></svg>',
+      cybersecurity: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3 19 6v5c0 4.7-3 8-7 10-4-2-7-5.3-7-10V6l7-3Z"/><path d="m9.5 12 1.6 1.6 3.5-3.6"/></svg>',
+      ai: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="3"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/><circle cx="10" cy="11" r=".8" fill="currentColor"/><circle cx="14" cy="11" r=".8" fill="currentColor"/><path d="M9.5 14h5"/></svg>'
+    };
+
+    const sectors = {
+      medicine: { icon: 'medicine', en: 'Medicine', ar: 'الطب', description: { en: 'Supports Vision 2030 by improving preventive care, medical innovation, and the quality and efficiency of Saudi healthcare.', ar: 'يدعم رؤية 2030 عبر تعزيز الرعاية الوقائية والابتكار الطبي وجودة وكفاءة الرعاية الصحية السعودية.' }, courses: [{ en: 'Coursera Medicine', ar: 'كورسيرا للطب', url: 'https://www.coursera.org/browse/health/medicine' }, { en: 'edX Harvard Medicine', ar: 'إدكس - طب هارفارد', url: 'https://www.edx.org/school/harvardx' }, { en: 'FutureLearn', ar: 'فيوتشر ليرن', url: 'https://www.futurelearn.com/subjects/healthcare-medicine-courses' }] },
+      nursing: { icon: 'nursing', en: 'Nursing', ar: 'التمريض', description: { en: 'A core part of the Health Sector Transformation Program, helping deliver compassionate, accessible, and high-quality care across the Kingdom.', ar: 'جزء أساسي من برنامج تحول القطاع الصحي، يساهم في تقديم رعاية رحيمة ومتاحة وعالية الجودة في أنحاء المملكة.' }, courses: [{ en: 'Coursera Nursing', ar: 'كورسيرا للتمريض', url: 'https://www.coursera.org/browse/health/nursing' }, { en: 'Nurse.com', ar: 'نيرس دوت كوم', url: 'https://www.nurse.com/ce' }, { en: 'Rwaq', ar: 'رواق', url: 'https://www.rwaq.org/' }] },
+      engineering: { icon: 'engineering', en: 'Engineering', ar: 'الهندسة', description: { en: 'Builds the infrastructure, sustainable cities, industry, and mega-projects that power Vision 2030.', ar: 'تبني البنية التحتية والمدن المستدامة والصناعة والمشاريع العملاقة التي تقود رؤية 2030.' }, courses: [{ en: 'Coursera Engineering', ar: 'كورسيرا للهندسة', url: 'https://www.coursera.org/browse/physical-science-and-engineering' }, { en: 'edX', ar: 'إدكس', url: 'https://www.edx.org/learn/engineering' }, { en: 'Misk Academy', ar: 'أكاديمية مسك', url: 'https://hub.misk.org.sa/' }] },
+      tourism: { icon: 'tourism', en: 'Tourism', ar: 'السياحة', description: { en: 'Supports economic diversification by welcoming the world, improving hospitality, and showcasing Saudi culture and destinations.', ar: 'تدعم التنويع الاقتصادي عبر الترحيب بالعالم وتحسين الضيافة وإبراز الثقافة والوجهات السعودية.' }, courses: [{ en: 'Coursera Tourism', ar: 'كورسيرا للسياحة', url: 'https://www.coursera.org/courses?query=tourism' }, { en: 'Saudi Tourism Academy', ar: 'أكاديمية السعودية للسياحة', url: 'https://www.sta.gov.sa/' }, { en: 'UNWTO Academy', ar: 'أكاديمية الأمم المتحدة للسياحة', url: 'https://www.unwto.org/academy' }] },
+      media: { icon: 'media', en: 'Media', ar: 'الإعلام', description: { en: 'Strengthens Saudi storytelling, creative industries, cultural influence, and digital communication.', ar: 'يعزز السرد السعودي والصناعات الإبداعية والتأثير الثقافي والتواصل الرقمي.' }, courses: [{ en: 'Coursera Media', ar: 'كورسيرا للإعلام', url: 'https://www.coursera.org/courses?query=media' }, { en: 'Misk', ar: 'مسك', url: 'https://hub.misk.org.sa/' }, { en: 'Alison', ar: 'أليسون', url: 'https://alison.com/tag/media-studies' }] },
+      cybersecurity: { icon: 'cybersecurity', en: 'Cybersecurity', ar: 'الأمن السيبراني', description: { en: 'Protects Saudi digital infrastructure, institutions, data, and the growing digital economy.', ar: 'يحمي البنية التحتية الرقمية السعودية والمؤسسات والبيانات والاقتصاد الرقمي المتنامي.' }, courses: [{ en: 'TryHackMe', ar: 'تراي هاك مي', url: 'https://tryhackme.com/' }, { en: 'Coursera Cybersecurity', ar: 'كورسيرا للأمن السيبراني', url: 'https://www.coursera.org/browse/information-technology/cybersecurity' }, { en: 'SANS', ar: 'سانز', url: 'https://www.sans.org/cyber-security-courses/' }] },
+      ai: { icon: 'ai', en: 'Artificial Intelligence', ar: 'الذكاء الاصطناعي', description: { en: 'Powers smart government, innovation, data-driven services, and future technologies across Saudi Arabia.', ar: 'يعزز الحكومة الذكية والابتكار والخدمات المعتمدة على البيانات وتقنيات المستقبل في أنحاء السعودية.' }, courses: [{ en: 'Coursera AI', ar: 'كورسيرا للذكاء الاصطناعي', url: 'https://www.coursera.org/browse/data-science/artificial-intelligence' }, { en: 'Kaggle Learn', ar: 'تعلّم كاغل', url: 'https://www.kaggle.com/learn' }, { en: 'Misk AI Academy', ar: 'أكاديمية مسك للذكاء الاصطناعي', url: 'https://hub.misk.org.sa/' }] }
+    };
+
+    const q = (en, ar, sectors) => ({ text: { en, ar }, sectors });
+    const questions = [
+      { type: 'multi', text: { en: 'Select all the activities you enjoy?', ar: 'اختر جميع الأنشطة التي تستمتع بها' }, options: [q('Meeting the needs of others', 'تلبية احتياجات الآخرين', ['nursing','medicine']), q('Generating scientific knowledge', 'إنتاج المعرفة العلمية', ['medicine']), q('Designing things', 'تصميم الأشياء', ['engineering']), q('Organizing travel and exploring cultures', 'تنظيم السفر واستكشاف الثقافات', ['tourism']), q('Writing, photography, and content creation', 'الكتابة والتصوير وصناعة المحتوى', ['media']), q('Protecting computer systems and decryption', 'حماية أنظمة الحاسوب وفك التشفير', ['cybersecurity']), q('Analyzing biological data', 'تحليل البيانات الحيوية', ['ai'])] },
+      { type: 'single', text: { en: 'What kind of problems do you enjoy solving?', ar: 'ما نوع المشكلات التي تستمتع بحلها؟' }, options: [q('Health plans and saving lives', 'الخطط الصحية وإنقاذ الأرواح', ['medicine','nursing']), q('Direct humanitarian decisions', 'القرارات الإنسانية المباشرة', ['nursing']), q('Engineering and construction', 'الهندسة والبناء', ['engineering']), q('Customer experience and hospitality issues', 'مشكلات تجربة العملاء والضيافة', ['tourism']), q('Communication and marketing challenges', 'تحديات الاتصال والتسويق', ['media']), q('Digital breaches and threats', 'الاختراقات والتهديدات الرقمية', ['cybersecurity']), q('Smart algorithms and predictive modeling', 'الخوارزميات الذكية والنمذجة التنبؤية', ['ai'])] },
+      { type: 'single', text: { en: 'How would you describe your problem-solving style?', ar: 'كيف تصف أسلوبك في حل المشكلات؟' }, options: [q('Calm and precise under pressure', 'هادئ ودقيق تحت الضغط', ['medicine']), q('Empathetic, caring, and human-centric', 'متفهم ومهتم ومحوره الإنسان', ['nursing']), q('Logical, organized, and practical', 'منطقي ومنظم وعملي', ['engineering','cybersecurity']), q('Creative and sociable', 'مبدع واجتماعي', ['media','tourism']), q('Analytical, with an eye for hidden details', 'تحليلي، ولديك عين للتفاصيل الخفية', ['cybersecurity','ai']), q('Innovative and experimental', 'مبتكر وتجريبي', ['ai'])] },
+      { type: 'multi', text: { en: 'What skills do you currently possess?', ar: 'ما المهارات التي تمتلكها حاليًا؟' }, options: [q('Biology and Chemistry', 'الأحياء والكيمياء', ['medicine','nursing']), q('Empathy and Communication', 'التعاطف والتواصل', ['nursing','tourism','media']), q('Mathematics and Physics', 'الرياضيات والفيزياء', ['engineering']), q('Photography and Writing', 'التصوير والكتابة', ['media']), q('Computers and Networks', 'الحواسيب والشبكات', ['cybersecurity']), q('Programming and Python', 'البرمجة وبايثون', ['ai']), q('Customer Service', 'خدمة العملاء', ['tourism'])] },
+      { type: 'single', text: { en: 'How willing are you to learn new skills?', ar: 'ما مدى استعدادك لتعلّم مهارات جديدة؟' }, options: [q('Very long-term study', 'دراسة طويلة المدى جدًا', ['medicine']), q('Willing to learn through practical and human-centric approaches', 'مستعد للتعلم عبر أساليب عملية تتمحور حول الإنسان', ['nursing']), q('Willing to learn engineering software', 'مستعد لتعلم برامج الهندسة', ['engineering']), q('Eager to learn languages and cultures', 'متحمس لتعلم اللغات والثقافات', ['tourism']), q('Willing to learn evolving media methods', 'مستعد لتعلم أساليب الإعلام المتطورة', ['media']), q('Willing to learn cutting-edge cybersecurity technologies daily', 'مستعد لتعلم تقنيات الأمن السيبراني المتقدمة يوميًا', ['cybersecurity']), q('Studies advanced mathematics and algorithms', 'أدرس الرياضيات والخوارزميات المتقدمة', ['ai'])] },
+      { type: 'single', text: { en: 'How comfortable are you with technology and computers?', ar: 'ما مدى ارتياحك للتقنية والحواسيب؟' }, options: [q('Moderate – I use it mainly as a tool', 'متوسط – أستخدمها بشكل أساسي كأداة', ['medicine','nursing','tourism','media']), q('Advanced', 'متقدم', ['engineering']), q('Expert – I live inside the computer', 'خبير – أعيش داخل الحاسوب', ['cybersecurity','ai'])] },
+      { type: 'single', text: { en: 'What is your preferred work schedule?', ar: 'ما جدول العمل الذي تفضله؟' }, options: [q('Shifts, emergencies, and irregular schedules', 'مناوبات وطوارئ وجداول غير منتظمة', ['medicine','nursing']), q('Field projects and on-site work', 'مشاريع ميدانية وعمل في الموقع', ['engineering']), q('Seasonal work, travel, and flexibility', 'عمل موسمي وسفر ومرونة', ['tourism']), q('Flexible, creative, and dynamic', 'مرن وإبداعي وديناميكي', ['media']), q('Office-based with emergency alerts', 'عمل مكتبي مع تنبيهات طارئة', ['cybersecurity']), q('Flexible remote office work', 'عمل مكتبي مرن عن بُعد', ['ai'])] },
+      { type: 'single', text: { en: 'What size company do you prefer to work for?', ar: 'ما حجم الشركة التي تفضل العمل فيها؟' }, options: [q('Hospital or health center', 'مستشفى أو مركز صحي', ['medicine','nursing']), q('Contracting firm or major corporation', 'شركة مقاولات أو مؤسسة كبرى', ['engineering']), q('Hotel or global tourism company', 'فندق أو شركة سياحة عالمية', ['tourism']), q('Media agency or channel', 'وكالة إعلامية أو قناة', ['media']), q('Government entity, bank, or STC', 'جهة حكومية أو بنك أو شركة STC', ['cybersecurity']), q('Tech startup or Google', 'شركة تقنية ناشئة أو Google', ['ai'])] },
+      { type: 'single', text: { en: 'What is your expected monthly salary range? (SAR)', ar: 'ما نطاق راتبك الشهري المتوقع؟ (ريال سعودي)' }, options: [q('15,000 – 25,000', '15,000 – 25,000', ['nursing','tourism','media']), q('25,000 – 40,000', '25,000 – 40,000', ['medicine','engineering','cybersecurity','ai']), q('Over 40,000 (for highly experienced professionals)', 'أكثر من 40,000 (للمحترفين ذوي الخبرة العالية)', ['medicine','ai','cybersecurity']), q('Passion matters more to me than salary', 'الشغف أهم لدي من الراتب', ['medicine','nursing','engineering','tourism','media','cybersecurity','ai'])] },
+      { type: 'single', text: { en: 'Where do you prefer to work?', ar: 'أين تفضل العمل؟' }, options: [q('Hospital and Laboratory', 'المستشفى والمختبر', ['medicine','nursing']), q('Site and Factory', 'الموقع والمصنع', ['engineering']), q('Hotels, Airports, and the Global Stage', 'الفنادق والمطارات والساحة العالمية', ['tourism']), q('Studio and Field', 'الاستوديو والميدان', ['media']), q('Control and Security Center', 'مركز التحكم والأمن', ['cybersecurity']), q('Technical or Remote Office', 'مكتب تقني أو عن بُعد', ['ai'])] }
+    ];
+
+    const copy = {
+      en: { title: 'Which Vision 2030 Sector Suits You?', brand: 'Vision 2030', eyebrow: 'Your future, aligned', intro: 'Discover the Saudi sector where your strengths, interests, and ambition can make the greatest impact.', start: 'Start Quiz', minutes: 'Takes about 3 minutes', feature1Title: '10 thoughtful questions', feature1Text: 'Built around what drives you.', feature2Title: '7 growing sectors', feature2Text: 'Discover your best direction.', feature3Title: 'Made for your future', feature3Text: 'Inspired by Vision 2030.', nameTitle: 'Let’s make this personal.', nameCopy: 'Tell us your name before we begin. Your answers stay in this browser.', nameLabel: 'What should we call you?', namePlaceholder: 'Enter your name', nameHelp: 'Your name is only used to personalize your result.', begin: 'Begin quiz', backToHome: 'Back to welcome', nameError: 'Please enter your name to begin.', question: 'Question', of: 'of', multi: 'Select all that apply', multiIcon: 'Multiple answers allowed', chooseError: 'Choose at least one answer to continue.', next: 'Next', back: 'Back', finish: 'See my result', resultEyebrow: 'Your Vision 2030 match', resultTitle: 'Great direction,', resultLead: 'Based on your answers, these sectors could be an excellent fit for your path.', compatibility: 'Compatibility', courses: 'Courses for You', share: 'Share Result', retake: 'Retake Quiz', shareTitle: 'My Vision 2030 sector result', shareText: 'I discovered my Vision 2030 sector match! Take the quiz to find yours.', copied: 'Result copied to your clipboard.', copyFailed: 'Unable to copy the result. Please try again.', themeDark: 'Switch to dark mode', themeLight: 'Switch to light mode', skip: 'Skip to content', external: 'Opens learning resource in a new tab' },
+      ar: { title: 'أي قطاع من رؤية 2030 يناسبك؟', brand: 'رؤية 2030', eyebrow: 'مستقبلك، في انسجام', intro: 'اكتشف القطاع السعودي الذي يمكن لنقاط قوتك واهتماماتك وطموحك أن تصنع فيه الأثر الأكبر.', start: 'ابدأ الاختبار', minutes: 'يستغرق نحو 3 دقائق', feature1Title: '10 أسئلة مدروسة', feature1Text: 'مبنية على ما يحفزك.', feature2Title: '7 قطاعات واعدة', feature2Text: 'اكتشف وجهتك الأفضل.', feature3Title: 'مصمم لمستقبلك', feature3Text: 'مستوحى من رؤية 2030.', nameTitle: 'لنجعلها تجربة شخصية.', nameCopy: 'أخبرنا باسمك قبل أن نبدأ. إجاباتك تبقى في هذا المتصفح.', nameLabel: 'بماذا نُناديك؟', namePlaceholder: 'أدخل اسمك', nameHelp: 'يستخدم اسمك فقط لتخصيص نتيجتك.', begin: 'ابدأ الاختبار', backToHome: 'العودة للترحيب', nameError: 'يرجى إدخال اسمك للبدء.', question: 'السؤال', of: 'من', multi: 'اختر جميع ما ينطبق', multiIcon: 'يمكن اختيار عدة إجابات', chooseError: 'اختر إجابة واحدة على الأقل للمتابعة.', next: 'التالي', back: 'السابق', finish: 'اعرض نتيجتي', resultEyebrow: 'تطابقك مع رؤية 2030', resultTitle: 'اتجاه رائع،', resultLead: 'بناءً على إجاباتك، قد تكون هذه القطاعات مناسبة جدًا لمسارك.', compatibility: 'نسبة التوافق', courses: 'دورات لك', share: 'شارك النتيجة', retake: 'أعد الاختبار', shareTitle: 'نتيجتي لقطاع رؤية 2030', shareText: 'اكتشفت القطاع المناسب لي في رؤية 2030! خذ الاختبار لتكتشف قطاعك.', copied: 'تم نسخ النتيجة إلى الحافظة.', copyFailed: 'تعذر نسخ النتيجة. حاول مرة أخرى.', themeDark: 'التبديل إلى الوضع الداكن', themeLight: 'التبديل إلى الوضع الفاتح', skip: 'تخطَّ إلى المحتوى', external: 'يفتح موردًا تعليميًا في علامة تبويب جديدة' }
+    };
+
+    const state = { lang: localStorage.getItem('vision2030-language') || 'en', theme: localStorage.getItem('vision2030-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'), screen: 'welcome', name: '', current: 0, answers: Array(questions.length).fill(null), toastTimer: null };
+    const main = document.getElementById('main-content');
+    const t = (key) => copy[state.lang][key];
+    const text = (value) => value[state.lang];
+
+    function setDocumentLanguage() {
+      document.documentElement.lang = state.lang;
+      document.documentElement.dir = state.lang === 'ar' ? 'rtl' : 'ltr';
+      document.title = t('title');
+      document.getElementById('brandText').textContent = t('brand');
+      document.getElementById('skipLink').textContent = t('skip');
+      document.getElementById('languageToggle').textContent = state.lang === 'en' ? 'عربي' : 'EN';
+      document.getElementById('languageToggle').setAttribute('aria-label', state.lang === 'en' ? 'التبديل إلى العربية' : 'Switch to English');
+      document.getElementById('languageToggle').title = document.getElementById('languageToggle').getAttribute('aria-label');
+      const themeButton = document.getElementById('themeToggle');
+      themeButton.setAttribute('aria-label', state.theme === 'dark' ? t('themeLight') : t('themeDark'));
+      themeButton.title = themeButton.getAttribute('aria-label');
+      document.documentElement.dataset.theme = state.theme;
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', state.theme === 'dark' ? '#071f28' : '#006c5b');
+      document.getElementById('themeIcon').innerHTML = state.theme === 'dark' ? '<path d="M20.4 15.1A8.5 8.5 0 0 1 8.9 3.6 8.5 8.5 0 1 0 20.4 15.1Z"/>' : '<path d="M12 3v2M12 19v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M3 12h2M19 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/><circle cx="12" cy="12" r="4"/>';
+    }
+
+    function setScreen(screen, focusSelector) {
+      state.screen = screen;
+      render();
+      requestAnimationFrame(() => {
+        const target = focusSelector ? document.querySelector(focusSelector) : document.querySelector('h1, h2, input, button');
+        if (target) target.focus({ preventScroll: true });
+        window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      });
+    }
+
+    function renderWelcome() {
+      return `<section class="view view-enter" aria-labelledby="welcome-title"><div class="panel hero"><div class="orb" aria-hidden="true">${icons.compass}</div><p class="eyebrow">${t('eyebrow')}</p><h1 id="welcome-title" tabindex="-1">${t('title')}</h1><p class="hero-copy">${t('intro')}</p><div class="button-row"><button class="button" type="button" id="startButton">${t('start')} ${icons.arrow}</button></div><p class="time-note">${icons.clock}<span>${t('minutes')}</span></p><div class="feature-list" aria-label="Quiz highlights"><div class="feature"><strong>${t('feature1Title')}</strong>${t('feature1Text')}</div><div class="feature"><strong>${t('feature2Title')}</strong>${t('feature2Text')}</div><div class="feature"><strong>${t('feature3Title')}</strong>${t('feature3Text')}</div></div></div></section>`;
+    }
+
+    function renderName() {
+      return `<section class="view view-enter"><div class="panel name-panel"><button class="back-link" type="button" id="homeButton">${icons.back}<span>${t('backToHome')}</span></button><p class="eyebrow">${t('eyebrow')}</p><h1 id="name-title" tabindex="-1">${t('nameTitle')}</h1><p class="hero-copy" style="margin-left:0;margin-right:0">${t('nameCopy')}</p><form id="nameForm" novalidate><label class="field-label" for="nameInput">${t('nameLabel')}</label><input class="text-input" id="nameInput" name="name" type="text" maxlength="60" autocomplete="name" placeholder="${t('namePlaceholder')}" value="${escapeHtml(state.name)}" aria-describedby="nameHelp nameError" required><p class="field-help" id="nameHelp">${t('nameHelp')}</p><p class="error-message" id="nameError" role="alert"></p><button class="button" type="submit">${t('begin')} ${icons.arrow}</button></form></div></section>`;
+    }
+
+    function renderQuiz() {
+      const question = questions[state.current];
+      const isMulti = question.type === 'multi';
+      const answer = state.answers[state.current] || [];
+      const progress = Math.round((state.current / questions.length) * 100);
+      const options = question.options.map((option, index) => {
+        const selected = answer.includes(index);
+        const type = isMulti ? 'checkbox' : 'radio';
+        return `<label class="option ${selected ? 'selected' : ''}"><input type="${type}" name="question-${state.current}" value="${index}" ${selected ? 'checked' : ''}><span class="control ${isMulti ? 'checkbox' : 'radio'}" aria-hidden="true">${icons.check}</span><span class="option-text">${escapeHtml(text(option.text))}</span></label>`;
+      }).join('');
+      const isLast = state.current === questions.length - 1;
+      return `<section class="view view-enter quiz-shell" aria-labelledby="question-title"><div class="quiz-top"><span class="step-label">${t('question')} ${state.current + 1} ${t('of')} ${questions.length}</span><div class="progress-track" role="progressbar" aria-label="${t('question')} ${state.current + 1} ${t('of')} ${questions.length}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress}"><div class="progress-bar" style="width:${progress}%"></div></div><span class="progress-pct">${progress}%</span></div><div class="panel question-card"><div class="question-kicker">${icons.spark}<span>${isMulti ? t('multiIcon') : t('question')}</span></div><h2 id="question-title" tabindex="-1">${escapeHtml(text(question.text))}</h2>${isMulti ? `<p class="multi-note">${icons.check}<span>${t('multi')}</span></p>` : ''}<fieldset><legend>${escapeHtml(text(question.text))}</legend><div class="option-list">${options}</div></fieldset><p class="quiz-error" id="quizError" role="alert"></p><div class="quiz-actions"><button class="button secondary" type="button" id="backButton" ${state.current === 0 ? 'disabled' : ''}>${icons.back}<span>${t('back')}</span></button><button class="button" type="button" id="nextButton"><span>${isLast ? t('finish') : t('next')}</span>${icons.arrow}</button></div></div></section>`;
+    }
+
+    function maxScores() {
+      const max = Object.fromEntries(Object.keys(sectors).map(key => [key, 0]));
+      questions.forEach(question => {
+        Object.keys(sectors).forEach(sector => {
+          if (question.type === 'multi') max[sector] += question.options.filter(option => option.sectors.includes(sector)).length;
+          else if (question.options.some(option => option.sectors.includes(sector))) max[sector] += 1;
+        });
+      });
+      return max;
+    }
+
+    function getResults() {
+      const scores = Object.fromEntries(Object.keys(sectors).map(key => [key, 0]));
+      state.answers.forEach((answers, qIndex) => {
+        (answers || []).forEach(optionIndex => questions[qIndex].options[optionIndex].sectors.forEach(sector => scores[sector] += 1));
+      });
+      const highest = Math.max(...Object.values(scores));
+      const winners = Object.keys(sectors).filter(sector => scores[sector] === highest);
+      const max = maxScores();
+      return { scores, winners, max };
+    }
+
+    function renderResults() {
+      const { scores, winners, max } = getResults();
+      const cards = winners.map((sector, index) => {
+        const item = sectors[sector];
+        const percentage = Math.min(100, Math.round((scores[sector] / max[sector]) * 100));
+        return `<article class="result-card" style="animation-delay:${index * 60}ms"><div class="sector-icon" aria-hidden="true">${icons[item.icon]}</div><div><h3>${item[state.lang]}</h3><div class="percentage">${percentage}<small>% ${t('compatibility')}</small></div><p>${item.description[state.lang]}</p></div></article>`;
+      }).join('');
+      const courseLinks = winners.flatMap(sector => sectors[sector].courses.map(course => `<a class="course-link" href="${course.url}" target="_blank" rel="noopener noreferrer" aria-label="${course[state.lang]} — ${t('external')}"><span>${course[state.lang]}</span>${icons.external}</a>`)).join('');
+      return `<section class="view view-enter"><div class="panel result-panel"><div class="result-intro"><p class="eyebrow">${t('resultEyebrow')}</p><h1 id="result-title" tabindex="-1">${t('resultTitle')} <span class="result-name">${escapeHtml(state.name)}</span></h1><p class="result-subcopy">${t('resultLead')}</p></div><div class="result-grid">${cards}</div><section class="courses" aria-labelledby="courses-title"><h2 id="courses-title">${t('courses')}</h2><div class="course-list">${courseLinks}</div></section><div class="result-actions"><button class="button" type="button" id="shareButton">${icons.copy}<span>${t('share')}</span></button><button class="button secondary" type="button" id="retakeButton">${icons.compass}<span>${t('retake')}</span></button></div></div></section>`;
+    }
+
+    function render() {
+      setDocumentLanguage();
+      main.innerHTML = state.screen === 'welcome' ? renderWelcome() : state.screen === 'name' ? renderName() : state.screen === 'quiz' ? renderQuiz() : renderResults();
+      bindScreenEvents();
+    }
+
+    function bindScreenEvents() {
+      if (state.screen === 'welcome') document.getElementById('startButton').addEventListener('click', () => setScreen('name', '#nameInput'));
+      if (state.screen === 'name') {
+        document.getElementById('homeButton').addEventListener('click', () => setScreen('welcome', '#welcome-title'));
+        document.getElementById('nameForm').addEventListener('submit', event => {
+          event.preventDefault();
+          const input = document.getElementById('nameInput');
+          const name = input.value.trim();
+          if (!name) { document.getElementById('nameError').textContent = t('nameError'); input.setAttribute('aria-invalid', 'true'); input.focus(); return; }
+          state.name = name; setScreen('quiz', '#question-title');
+        });
+      }
+      if (state.screen === 'quiz') {
+        document.querySelectorAll('.option input').forEach(input => input.addEventListener('change', event => {
+          const index = Number(event.target.value);
+          const current = state.answers[state.current] || [];
+          if (questions[state.current].type === 'single') state.answers[state.current] = [index];
+          else state.answers[state.current] = event.target.checked ? [...current, index] : current.filter(item => item !== index);
+          document.getElementById('quizError').textContent = '';
+          render();
+        }));
+        document.getElementById('backButton').addEventListener('click', () => { if (state.current > 0) { state.current -= 1; setScreen('quiz', '#question-title'); } });
+        document.getElementById('nextButton').addEventListener('click', () => {
+          if (!(state.answers[state.current] || []).length) { document.getElementById('quizError').textContent = t('chooseError'); return; }
+          if (state.current < questions.length - 1) { state.current += 1; setScreen('quiz', '#question-title'); }
+          else setScreen('result', '#result-title');
+        });
+      }
+      if (state.screen === 'result') {
+        document.getElementById('shareButton').addEventListener('click', shareResult);
+        document.getElementById('retakeButton').addEventListener('click', () => { state.current = 0; state.answers = Array(questions.length).fill(null); setScreen('welcome', '#welcome-title'); });
+      }
+    }
+
+    async function shareResult() {
+      const { winners } = getResults();
+      const winnerNames = winners.map(key => sectors[key][state.lang]).join(state.lang === 'ar' ? '، ' : ', ');
+      const message = `${t('shareText')} ${state.name}: ${winnerNames}`;
+      try {
+        if (navigator.share) await navigator.share({ title: t('shareTitle'), text: message });
+        else await navigator.clipboard.writeText(message);
+        showToast(t('copied'));
+      } catch (error) {
+        if (error.name === 'AbortError') return;
+        try { await fallbackCopy(message); showToast(t('copied')); } catch { showToast(t('copyFailed')); }
+      }
+    }
+
+    function fallbackCopy(message) {
+      return new Promise((resolve, reject) => {
+        const area = document.createElement('textarea');
+        area.value = message; area.setAttribute('readonly', ''); area.style.position = 'fixed'; area.style.opacity = '0';
+        document.body.appendChild(area); area.select();
+        const copied = document.execCommand('copy'); area.remove(); copied ? resolve() : reject(new Error('Copy failed'));
+      });
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message; toast.classList.add('show'); clearTimeout(state.toastTimer); state.toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+
+    function escapeHtml(value) { const div = document.createElement('div'); div.textContent = value; return div.innerHTML; }
+
+    document.getElementById('languageToggle').addEventListener('click', () => { state.lang = state.lang === 'en' ? 'ar' : 'en'; localStorage.setItem('vision2030-language', state.lang); render(); });
+    document.getElementById('themeToggle').addEventListener('click', () => { state.theme = state.theme === 'light' ? 'dark' : 'light'; localStorage.setItem('vision2030-theme', state.theme); render(); });
+    render();
+  </script>
+</body>
+</html>
